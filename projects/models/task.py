@@ -1,33 +1,22 @@
-from django.db import models
 from django.core.validators import MinLengthValidator
-
-
-# Задание 2 Дмитрий
-# Создайте модель Task со следующими полями:
-# Название задачи: строковое поле, уникальное, минимальная длина названия - 10 символов
-# Описание: большое строковое поле, может быть пустым
-# Статус: строковое поле максимальной длины в 15 символов, должно быть полем выбора разных статусов. По умолчанию все задачи новые
-# Приоритет: строковое поле максимальной длины в 15 символов, должно быть полем выбора разных приоритетов
-# Проект: связь с моделью Project, при удалении проекта все задачи должны удаляться
-# Дата создания задачи: поле, поддерживающее и дату, и время, заполняется автоматически только при создании
-# Дата обновления: поле, поддерживающее и дату, и время, заполняется автоматически всегдаДата удаления: поле, в котором может ничего не быть
+from django.db import models
 
 
 class Task(models.Model):
-    
+
     class Status(models.IntegerChoices):
         new = 1,"New"
         in_progress = 2,"In progress"
         done = 3,"Done"
         cancelled = 4,"Cancelled"
-    
+
     class Priority(models.IntegerChoices):
         low = 1,"Low"
         medium = 2,"Medium"
         high = 3,"High"
-        crirtical = 4,"Critical"
-        
-    
+        critical = 4,"Critical"
+
+
     name = models.CharField(
         max_length=100,
         unique=True,
@@ -50,8 +39,8 @@ class Task(models.Model):
     ),
     project = models.ForeignKey(
         "Project",
-        related_name="tasks", 
-        on_delete=models.CASCADE, 
+        related_name="tasks",
+        on_delete=models.CASCADE,
         verbose_name="Проект"
     )
     created_at = models.DateTimeField(
@@ -70,4 +59,10 @@ class Task(models.Model):
     due_date = models.DateTimeField(
         blank=True,
         null=True,
+    )
+
+    tags = models.ManyToManyField(
+        "Tag",
+        blank=True,
+        related_name="tasks"
     )
